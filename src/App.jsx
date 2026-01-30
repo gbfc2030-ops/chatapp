@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 
 // 배포 시에는 생성된 서버 URL을 넣어야 합니다 [13, 14]
-const socket = io('http://localhost:5000');
+const socket = io('https://chatapp-server.render.com');
 
 function App() {
   const [nickname, setNickname] = useState('');
@@ -82,5 +82,6 @@ function App() {
     </div>
   );
 }
+
 
 export default App;
