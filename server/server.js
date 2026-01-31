@@ -45,14 +45,16 @@ io.on('connection', (socket) => {
     );
   });
 
-  socket.on('send_message', (data) => {
-    io.emit('receive_message', {
-      id: Date.now(),
-      nickname: users[socket.id] || '익명',
-      text: data.text,
-      time: new Date().toLocaleTimeString()
-    });
+socket.on('send_message', (data) => {
+  console.log("📩 received:", data);
+
+  io.emit('receive_message', {
+    id: Date.now(),
+    nickname: users[socket.id] || '익명',
+    text: data.text,
+    time: new Date().toLocaleTimeString()
   });
+});
 
   socket.on('disconnect', () => {
     delete users[socket.id];
