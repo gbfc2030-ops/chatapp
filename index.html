@@ -46,23 +46,28 @@
     socket.emit("join_request", nick);
   }
 
-  function send() {
-    const text = document.getElementById("message").value;
+function send() {
+    const text = messageInput.value.trim();
+    if (!text) return;
+
+    // ✅ 서버가 기다리는 이벤트 이름
     socket.emit("send_message", { text });
-    document.getElementById("message").value = "";
+
+    messageInput.value = "";
   }
 
+  // ✅ 서버가 보내는 이벤트 이름
   socket.on("receive_message", (msg) => {
     const div = document.createElement("div");
     div.textContent = `[${msg.time}] ${msg.nickname}: ${msg.text}`;
-    document.getElementById("chat").appendChild(div);
+    chat.appendChild(div);
   });
 
   socket.on("system_message", (msg) => {
     const div = document.createElement("div");
     div.textContent = msg;
     div.style.color = "gray";
-    document.getElementById("chat").appendChild(div);
+    chat.appendChild(div);
   });
 </script>
 
