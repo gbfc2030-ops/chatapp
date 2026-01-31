@@ -5,33 +5,43 @@ const cors = require('cors');
 
 const app = express();
 
-/** ✅ GitHub Pages 주소 명시 */
-const ALLOWED_ORIGIN = "https://gbfc2030-ops.github.io";
-
+// ✅ GitHub Pages + 로컬 개발 모두 허용
 app.use(cors({
-  origin: ALLOWED_ORIGIN,
-  methods: ["GET", "POST"]
+  origin: [
+    'https://gbfc2030-ops.github.io', // GitHub Pages
+    'http://localhost:5173',
+    'http://localhost:3000'
+  ],
+  methods: ['GET', 'POST']
 }));
+
+// ✅ health check (Render용)
+app.get('/healthz', (req, res) => {
+  res.send('OK');
+});
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ALLOWED_ORIGIN,
-    methods: ["GET", "POST"]
+    origin: [
+      'https://gbfc2030-ops.github.io',
+      'http://localhost:5173',
+      'http://localhost:3000'
+    ],
+    methods: ['GET', 'POST']
   }
 });
 
+// 메모리 기반 사용자 관리
 const users = {};
 
 io.on('connection', (socket) => {
-  console.log('User connected:', socket.id);
-
   socket.on('join_request', (nickname) => {
     users[socket.id] = nickname;
     socket.broadcast.emit(
       'system_message',
-      `'${nickname}'님이 익명 채팅에 입장했습니다.`
+      `'${nickname}'님이 채팅에 입장했습니다.`
     );
   });
 
@@ -49,8 +59,7 @@ io.on('connection', (socket) => {
   });
 });
 
-/** Render가 자동으로 PORT 주입 */
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
