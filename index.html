@@ -2,66 +2,67 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>ChatApp</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>익명 채팅</title>
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: 40px auto;
+      margin: 0;
+      padding: 10px;
     }
-    #messages {
-      border: 1px solid #ccc;
-      height: 300px;
+    #chat {
+      height: 70vh;
       overflow-y: auto;
+      border: 1px solid #ccc;
       padding: 10px;
       margin-bottom: 10px;
     }
     input, button {
-      padding: 8px;
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      font-size: 16px;
     }
   </style>
 </head>
 <body>
 
-<h2>익명 채팅 (비저장)</h2>
+<h2>휴발유채팅</h2>
 
-<div id="messages"></div>
+<div id="chat"></div>
 
-<input id="nickname" placeholder="닉네임" />
+<input id="nickname" placeholder="닉네임 입력" />
 <button onclick="join()">입장</button>
-<br /><br />
-<input id="message" placeholder="메시지 입력" />
+
+<input id="message" placeholder="메시지 입력란입니다. 개인정보를 저장하지 않습니다." />
 <button onclick="send()">전송</button>
 
 <script>
-  // ✅ Render에 배포된 서버 주소
-  const socket = io('https://chatapp-server.render.com');
+  const socket = io("https://chatapp-server-1674.onrender.com");
 
   function join() {
-    const nickname = document.getElementById('nickname').value;
-    if (!nickname) return alert('닉네임 입력');
-    socket.emit('join_request', nickname);
+    const nick = document.getElementById("nickname").value;
+    socket.emit("join_request", nick);
   }
 
   function send() {
-    const text = document.getElementById('message').value;
-    if (!text) return;
-    socket.emit('send_message', { text });
-    document.getElementById('message').value = '';
+    const text = document.getElementById("message").value;
+    socket.emit("send_message", { text });
+    document.getElementById("message").value = "";
   }
 
-  socket.on('receive_message', (data) => {
-    const div = document.createElement('div');
-    div.textContent = `[${data.time}] ${data.nickname}: ${data.text}`;
-    document.getElementById('messages').appendChild(div);
+  socket.on("receive_message", (msg) => {
+    const div = document.createElement("div");
+    div.textContent = `[${msg.time}] ${msg.nickname}: ${msg.text}`;
+    document.getElementById("chat").appendChild(div);
   });
 
-  socket.on('system_message', (msg) => {
-    const div = document.createElement('div');
-    div.style.color = 'gray';
+  socket.on("system_message", (msg) => {
+    const div = document.createElement("div");
     div.textContent = msg;
-    document.getElementById('messages').appendChild(div);
+    div.style.color = "gray";
+    document.getElementById("chat").appendChild(div);
   });
 </script>
 
